@@ -287,12 +287,10 @@ function settings(){
 
 window.addEventListener("message", function(evt){
 	if (evt.data.messageType == "LOAD"){
-		score = evt.data.gameState.score;
-		wave = evt.data.gameState.wave;
+		score = parseInt(evt.data.gameState.score);
+		wave = parseInt(evt.data.gameState.wave);
 	    ctx = gameArea.context;
-	    ctx.font = "18px Arial";
-    	ctx.fillText("Score: " + score, 380,20);
-    	ctx.fillText("Wave: " + wave, 380, 40);
+	    updateGameArea();
 	}
 	else if (evt.data.messageType == "ERROR"){
 		alert(evt.data.info);
