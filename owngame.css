@@ -2,6 +2,6 @@ canvas{
 	background-color: rgb(242, 242, 242);
 }
 
-#button{
-	outline:none;
+#restart{
+	display:none;
 }

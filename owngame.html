@@ -3,12 +3,22 @@
 <html>
 	<head>
 		<link rel="stylesheet" href='owngame.css'>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
 	</head>
 	<body onload = "settings()">
 		<canvas id="gamecanvas" width="500" height="500"></canvas><br>
 		<button id="save" onclick="save()">Save</button>
 		<button id="load" onclick="load()">Load</button><br>
-		<button id="start" onclick ="startGame()">Next wave</button>
+		<button id="start" onclick ="startGame()">Next wave</button><br>
+		<button id="restart" onclick="startGame()">Restart game</button>
+		<script>
+			window.addEventListener('keydown', function(event){
+				event.preventDefault();
+				if (event.keyCode == 13 && document.getElementById("start").style.display != 'none'){
+					document.getElementById("start").click();
+				}
+			});
+		</script>
 		<script src='owngame.js'></script>
 	</body>
 </html>

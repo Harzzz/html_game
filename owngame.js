@@ -13,6 +13,7 @@ function startGame(){
 	document.getElementById("save").style.visibility = 'hidden';
 	document.getElementById("load").style.visibility = 'hidden';
 	document.getElementById("start").style.display = 'none';
+	document.getElementById("restart").style.display = 'none';
 	gameArea.start();
 	player = new component(50,50,250,250);
 }
@@ -37,7 +38,18 @@ var gameArea = {
         clearInterval(this.interval);
         clearInterval(this.shootinterval);
         clearInterval(this.enemyinterval);
+        this.context.font = ("24px Arial");
+        this.context.fillText("You died.", 200, 240);
+		this.context.fillText("Score: " + score, 200, 260);
+        this.context.fillText("Wave: " + wave, 200, 280);
         submithighscore();
+        document.getElementById("restart").style.display = 'block';
+        document.getElementById("restart").blur();
+        enemies = [];
+        enemiesleft = 0;
+        bullets = [];
+        score = 0;
+        wave = 1;
     },    
     nextwave : function() {
     	clearInterval(this.interval);
@@ -122,6 +134,7 @@ function updateGameArea(){
     }
     for (var enemy of enemies){
     	if (collision(player, enemy)){
+    		gameArea.clear();
     		gameArea.stop();
     	}
     	enemy.update();
@@ -235,12 +248,12 @@ function bulletCollision(bullet, enemy){
 
 
 //game-service communication below
-/*function save(){
+function save(){
 	var msg = {
 		"messageType": "SAVE",
 		"gameState": {
-			"score": parseFloat(score.text()),
-			"wave": parseFloat(wave.text())
+			"score":score.toString(),
+			"wave": wave.toString()
 		}
 	};
 	window.parent.postMessage(msg, "*");
@@ -256,22 +269,22 @@ function load(){
 function submithighscore(){
 	var msg = {
 		"messageType": "SCORE",
-		"score": parseFloat(score.text())
+		"score": score.toString()
 	};
 	window.parent.postMessage(msg, "*");
-}*/
+}
 
 function settings(){
 	var msg = {
 		"messageType": "SETTING",
 		"options": {
 			"width": 700,
-			"height": 700
+			"height": 600
 		}
 	};
 	window.parent.postMessage(msg, "*");
 }
-/*
+
 window.addEventListener("message", function(evt){
 	if (evt.data.messageType == "LOAD"){
 		score = evt.data.gameState.score;
@@ -284,4 +297,4 @@ window.addEventListener("message", function(evt){
 	else if (evt.data.messageType == "ERROR"){
 		alert(evt.data.info);
 	}
-})*/
+})
