@@ -259,19 +259,19 @@ function submithighscore(){
 		"score": parseFloat(score.text())
 	};
 	window.parent.postMessage(msg, "*");
-}
+}*/
 
 function settings(){
 	var msg = {
 		"messageType": "SETTING",
 		"options": {
-			"width": 500,
-			"height": 500
+			"width": 700,
+			"height": 700
 		}
 	};
 	window.parent.postMessage(msg, "*");
 }
-
+/*
 window.addEventListener("message", function(evt){
 	if (evt.data.messageType == "LOAD"){
 		score = evt.data.gameState.score;
