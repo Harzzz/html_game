@@ -290,12 +290,8 @@ window.addEventListener("message", function(evt){
 	if (evt.data.messageType == "LOAD"){
 		score = parseInt(evt.data.gameState.score);
 		wave = parseInt(evt.data.gameState.wave);
-	    ctx = gameArea.context;
-	    ctx = gameArea.context;
-	    ctx.font = "24px Arial";
-	    ctx.fillText("Game loaded succesfully.", 200, 240);
-	    ctx.fillText("Score: " + score, 200,260);
-	    ctx.fillText("Wave: " + wave, 200, 280);
+	    savemsg = "Gamestate loaded! Score: " + score + " Wave: " + wave;
+	    alert(savemsg);
 	}
 	else if (evt.data.messageType == "ERROR"){
 		alert(evt.data.info);
