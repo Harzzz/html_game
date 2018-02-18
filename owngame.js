@@ -50,6 +50,7 @@ var gameArea = {
         bullets = [];
         score = 0;
         wave = 1;
+        save();
     },    
     nextwave : function() {
     	clearInterval(this.interval);
@@ -290,7 +291,11 @@ window.addEventListener("message", function(evt){
 		score = parseInt(evt.data.gameState.score);
 		wave = parseInt(evt.data.gameState.wave);
 	    ctx = gameArea.context;
-	    updateGameArea();
+	    ctx = gameArea.context;
+	    ctx.font = "24px Arial";
+	    ctx.fillText("Game loaded succesfully.", 200, 240);
+	    ctx.fillText("Score: " + score, 200,260);
+	    ctx.fillText("Wave: " + wave, 200, 280);
 	}
 	else if (evt.data.messageType == "ERROR"){
 		alert(evt.data.info);
