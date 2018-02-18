@@ -1,0 +1,1 @@
+A small html/js game for a school project.
