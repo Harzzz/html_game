@@ -290,7 +290,7 @@ window.addEventListener("message", function(evt){
 	if (evt.data.messageType == "LOAD"){
 		score = parseInt(evt.data.gameState.score);
 		wave = parseInt(evt.data.gameState.wave);
-	    savemsg = "Gamestate loaded! Score: " + score + " Wave: " + wave;
+	    savemsg = "Gamestate loaded!\nScore: " + score + "\nWave: " + wave;
 	    alert(savemsg);
 	}
 	else if (evt.data.messageType == "ERROR"){
