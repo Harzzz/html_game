@@ -297,7 +297,9 @@ function submithighscore(){
 		"messageType": "SCORE",
 		"score": score.toString()
 	};
-	window.parent.postMessage(msg, "*");
+	if (score != 0){
+		window.parent.postMessage(msg, "*");
+	}
 }
 
 //this is called when the html document loads
