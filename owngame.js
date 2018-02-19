@@ -278,7 +278,9 @@ function save(){
 		}
 	};
 	window.parent.postMessage(msg, "*");
-	alert("Game saved succesfully!");
+	if (wave != 1 && score != 0){
+		alert("Game saved succesfully!");
+	}
 }
 
 //send load request
