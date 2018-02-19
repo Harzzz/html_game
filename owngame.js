@@ -278,6 +278,7 @@ function save(){
 		}
 	};
 	window.parent.postMessage(msg, "*");
+	alert("Game saved succesfully!");
 }
 
 //send load request
