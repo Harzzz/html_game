@@ -7,7 +7,7 @@ var bullets = [];
 var enemiesleft;
 var enemies = [];
 
-
+//hide buttons and call the start function
 function startGame(){
 	document.getElementById("start").blur();
 	document.getElementById("save").style.visibility = 'hidden';
@@ -24,9 +24,9 @@ var gameArea = {
 		enemiesleft = wave * 3;
 		this.context = this.canvas.getContext("2d");
 		document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-		this.interval = setInterval(updateGameArea, 20);
+		this.interval = setInterval(updateGameArea, 20); //game updates every 20ms
 		this.shootinterval = setInterval(updateBullets, 200); //add separate interval to reduce fire rate of the weapon NOTE: you have to hold space for 200ms before character starts to shoot
-		this.enemyinterval = setInterval(spawnEnemy, 1000);
+		this.enemyinterval = setInterval(spawnEnemy, 1000); //enemies spawn every 1000ms
         window.addEventListener('keydown', function (e) {
             keys[e.keyCode] = true;
         })
@@ -35,6 +35,7 @@ var gameArea = {
         })
     }, 
     stop : function() {
+    	//this gets called when player dies. resets all values to default
         clearInterval(this.interval);
         clearInterval(this.shootinterval);
         clearInterval(this.enemyinterval);
@@ -53,6 +54,7 @@ var gameArea = {
         save();
     },    
     nextwave : function() {
+    	//this is called when all enemies are dead. Makes buttons visible and clears necessary stuff from previous round
     	clearInterval(this.interval);
     	clearInterval(this.shootinterval);
     	clearInterval(this.enemyinterval);
@@ -67,6 +69,7 @@ var gameArea = {
 	}
 }
 
+//player model
 function component(width, height, x, y){
 	this.image = new Image();
 	this.image.src = playerSprite;
@@ -78,6 +81,7 @@ function component(width, height, x, y){
 	this.y = y;
 	this.speed = 0;
 	this.update = function() {
+		//draw updated position
 		this.image.src = playerSprite;
 		model = gameArea.context;
 		model.save();
@@ -89,6 +93,7 @@ function component(width, height, x, y){
 	}
 
 	this.updatePos = function() {
+		//update player position
         this.angle += this.moveAngle * Math.PI / 180;
         var new_x = this.x + this.speed * Math.sin(this.angle);
         var new_y = this.y - this.speed * Math.cos(this.angle)
@@ -101,7 +106,7 @@ function component(width, height, x, y){
 	}
 }
 
-
+//keeps track of user input and updates depending on it
 function updateGameArea(){
 	if (enemies.length == 0 && enemiesleft == 0){
 		gameArea.nextwave();
@@ -121,6 +126,7 @@ function updateGameArea(){
     if (keys[40]){
     	player.speed = -3;
     }
+    //update all bullets and check collisions
     for (var bullet of bullets){
     	var i = enemies.length -1;
     	while (i >= 0){
@@ -133,6 +139,7 @@ function updateGameArea(){
     	bullet.update();
     	bullet.draw();
     }
+    //update all enemies and check collisions
     for (var enemy of enemies){
     	if (collision(player, enemy)){
     		gameArea.clear();
@@ -141,6 +148,7 @@ function updateGameArea(){
     	enemy.update();
     	enemy.draw();
     }
+    //draw info about game to upper right corner
     ctx = gameArea.context;
     ctx.font = "18px Arial";
     ctx.fillText("Score: " + score, 380,20);
@@ -149,7 +157,9 @@ function updateGameArea(){
 	player.update();
 }
 
-
+//add bullets  when user presses space
+//also play sound every time user shoots
+//also change player image to a shooting one, creating a fancy animation
 function updateBullets(){
 	var riflesound = new Audio("rifle.ogg");
     if (keys[32]){
@@ -162,6 +172,7 @@ function updateBullets(){
     }
 }
 
+//if enemies left, spawn one. This is called every 1000ms according to earlier interval
 function spawnEnemy(){
 	if (enemiesleft > 0){
 		enemies.push(Enemy());
@@ -169,20 +180,23 @@ function spawnEnemy(){
 	}
 }
 
-
+//bullet model
 function Bullet(bullet){
 	bullet.active = true;
 	bullet.width = 3;
 	bullet.height = 3;
 	bullet.angle = player.angle;
 	bullet.inBounds = function(){
+		//check if bullet is inbounds
 		return bullet.x >= 0 && bullet.x <= gameArea.canvas.width && bullet.y >= 0 && bullet.y <= gameArea.canvas.height;
 	};
 	bullet.draw = function(){
+		//draw bullet
 		ctx = gameArea.context;
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	};
 	bullet.update = function(){
+		//update bullet position
 		bullet.x = bullet.x + (bullet.speed * Math.sin(bullet.angle));
 		bullet.y = bullet.y - (bullet.speed * Math.cos(bullet.angle));
 		bullet.active = bullet.active && bullet.inBounds();
@@ -190,6 +204,7 @@ function Bullet(bullet){
 	return bullet;
 }
 
+//this is called everytime player shoots, creating a new bullet
 function shoot(){
 	var bulletx = player.x;
 	var bullety = player.y;
@@ -200,12 +215,13 @@ function shoot(){
 	}));
 }
 
-
+//enemy model
 function Enemy(enemy){
 	enemy = enemy || {};
 	enemy.x = 0;
 	enemy.y = 0;
-	var edge = Math.floor(Math.random() * 4);//radnom number from 0-3
+	//spawn enemies randomly to each side of the map
+	var edge = Math.floor(Math.random() * 4);//random number from 0-3
 	if (edge == 0){//west edge
 		enemy.x = 0;
 		enemy.y = Math.random() * (gameArea.canvas.height -50 + 1);
@@ -228,6 +244,7 @@ function Enemy(enemy){
 		gameArea.context.drawImage(this.image, this.x, this.y, 50, 50);
 	}
 	enemy.update = function(){
+		//a simple algorithm to make enemies follow player. Update enemy positions accordingly
 		var xdist = -25 + player.x - enemy.x;
 		var ydist = -25 + player.y - enemy.y;
 		var hyp = Math.sqrt(xdist*xdist + ydist*ydist);
@@ -239,16 +256,19 @@ function Enemy(enemy){
 	return enemy;
 }
 
+//check collision between enemies and player
 function collision(player, enemy){
 	return player.x < enemy.x + 75 && player.x + 25 > enemy.x && player.y < enemy.y + 75 && player.y +25 > enemy.y;
 }
 
+//check collisions between bullets and enemies
 function bulletCollision(bullet, enemy){
 	return bullet.x < enemy.x + 50 && bullet.x > enemy.x && bullet.y < enemy.y + 50 && bullet.y > enemy.y	
 }
 
 
 //game-service communication below
+//save game
 function save(){
 	var msg = {
 		"messageType": "SAVE",
@@ -260,6 +280,7 @@ function save(){
 	window.parent.postMessage(msg, "*");
 }
 
+//send load request
 function load(){
 	var msg = {
 		"messageType": "LOAD_REQUEST",
@@ -267,6 +288,7 @@ function load(){
 	window.parent.postMessage(msg, "*");
 }
 
+//this is called automatically when player dies
 function submithighscore(){
 	var msg = {
 		"messageType": "SCORE",
@@ -275,6 +297,7 @@ function submithighscore(){
 	window.parent.postMessage(msg, "*");
 }
 
+//this is called when the html document loads
 function settings(){
 	var msg = {
 		"messageType": "SETTING",
@@ -286,6 +309,7 @@ function settings(){
 	window.parent.postMessage(msg, "*");
 }
 
+//listen to incoming messages. Load the game if message is LOAD, otherwise show error
 window.addEventListener("message", function(evt){
 	if (evt.data.messageType == "LOAD"){
 		score = parseInt(evt.data.gameState.score);
